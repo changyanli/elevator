@@ -33,6 +33,22 @@ class elevator:
             self.moving=self.velocity
         else:
             self.moving-=1
+    def getInf(self,time):
+        etime=[]
+        for peo in self.passenger:
+            etime.append(time-peo.time)
+        avr_time=0
+        max_time=0
+        if(len(etime)>0):
+            avr_time=round(sum(etime)/len(etime),4)
+            max_time=max(etime)
+        Inf = [ self.status,
+                self.floor,
+                avr_time,
+                max_time,
+                self.moving ]
+        Inf.extend(self.floorbtn)
+        return Inf
     def get_status(self):
         return self.status
     def peo_num(self):

@@ -2,7 +2,6 @@ from threading import Thread
 import time
 import tkinter as tk
 from tkinter import *
-import  passenger
 import elev_sys as system
 class elev_imit:
     def __init__(self):
@@ -121,9 +120,9 @@ class elev_imit:
             self.peotext[i]=self.can.create_text((floor1[0]+floor1[2]+floor2[0]+floor2[2])/4,(floor[1]+floor[3])/2,text=text)
         """
         if( self.sys.elev1.floorfloat==0):
-            self.can.create_text(50+self.size/2,30,text="開")
+            self.can.create_text(50+self.size/2,30,text="Open")
             time.sleep(0.1)
-            self.can.create_text(50+self.size/2,30,text="關")
+            self.can.create_text(50+self.size/2,30,text="Close")
             time.sleep(0.1)
         """
     def main(self):

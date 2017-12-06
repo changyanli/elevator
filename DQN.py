@@ -3,9 +3,9 @@ import random
 import numpy as np
 # import own classes
 from deepq import DeepQ
-import elev_sys
+import elev_sys as system
 
-env = elev_sys()
+env = system.elev_sys()
 epochs = 1000
 steps = 1000
 updateTargetNetwork = 10000
@@ -23,7 +23,7 @@ last100Filled = False
 renderPerXEpochs = 50
 shouldRender = False
 
-deepQ = DeepQ(len(env.observation_space.high), env.action_space.n, memorySize, discountFactor, learningRate, learnStart)
+deepQ = DeepQ(52,9, memorySize, discountFactor, learningRate, learnStart)
 deepQ.initNetworks([30,30,30])
 
 stepCounter = 0
@@ -33,17 +33,13 @@ for epoch in xrange(epochs):
     observation = env.reset()
     print (explorationRate)
     # number of timesteps
-    totalReward = 0
     for t in xrange(steps):
-        if epoch % renderPerXEpochs == 0 and shouldRender:
-            env.render()
+    #    if epoch % renderPerXEpochs == 0 and shouldRender:
+     #       env.render()
         qValues = deepQ.getQValues(observation)
 
         action = deepQ.selectAction(qValues, explorationRate)
-
-        newObservation, reward, done, info = env._step(action)
-        totalReward += reward
-
+        newObservation, reward, done, info = env._step(action,t)
         deepQ.addMemory(observation, action, reward, newObservation, done)
 
         if stepCounter >= learnStart:
@@ -55,15 +51,19 @@ for epoch in xrange(epochs):
         observation = newObservation
 
         if done:
-            last100Scores[last100ScoresIndex] = totalReward
+            if(len(env.finishtime)>0):
+                print("Finish Total ",len(env.finishtime)," with average time",round(sum(env.finishtime)/len(env.finishtime),4))
+            else :
+                print("Finish nobody")
+            last100Scores[last100ScoresIndex] = env._time_reward(t)[0]
             last100ScoresIndex += 1
             if last100ScoresIndex >= 100:
                 last100Filled = True
                 last100ScoresIndex = 0
             if not last100Filled:
-                print ("Episode ",epoch," finished after {} timesteps".format(t+1)," with total reward",totalReward)
+                print ("Episode ",epoch," finished after {} timesteps".format(t+1)," with average time",last100Scores[last100ScoresIndex-1])
             else :
-                print ("Episode ",epoch," finished after {} timesteps".format(t+1)," with total reward",totalReward," last 100 average: ",(sum(last100Scores)/len(last100Scores)))
+                print ("Episode ",epoch," finished after {} timesteps".format(t+1)," with average time",last100Scores[last100ScoresIndex-1]," last 100 average: ",(sum(last100Scores)/len(last100Scores)))
             break
 
         stepCounter += 1

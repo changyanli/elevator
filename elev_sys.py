@@ -28,16 +28,19 @@ class elev_sys:
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
     def reset(self):
-        self.elev1=elev.elevator(self)
-        self.elev2=elev.elevator(self)
+        self.elev1=elev.elevator(self.maxfloor)
+        self.elev2=elev.elevator(self.maxfloor)
         for i in range(self.maxfloor-1):
             self.upbtn[i]=False
             self.downbtn[i]=False
         for i in range(self.maxfloor):
             self.waitpeo[i]=[]
         self.finishtime=[]
+        return self._step(0,0)[0]
     def _time_reward(self,time):
-        wait_time=self.finishtime
+        wait_time=[]
+        for i in self.finishtime:
+            wait_time.append(i)
         for i in range(self.maxfloor):
             for peo in self.waitpeo[i]:
                 wait_time.append(time-peo.time)
@@ -55,24 +58,41 @@ class elev_sys:
         self.elev1.move(self,time)
         self.elev2.move(self,time)
         self.control(time)
-    def _step(self,action):
+    def _step(self,action,time):
         self.peo_come(time)
         self.set_btn()
         self.elev1.move(self,time)
         self.elev2.move(self,time)
-        self.elev1.status=action[0]
-        self.elev2.status=action[1]
-        state = [self.elev1,self.elev2,waitpeo,averagetime,maxtime]
-        reward=0
-        for time in self.averagetime:
-            reward+=time
-        reward/=self.maxfloor
-        reward-=maxtime
-        if(maxtime>180):
+        self.elev1.status=action //3
+        self.elev2.status=action % 3
+        averageTime , maxTime = self._time_reward(time)
+        state=[averageTime,maxTime]
+        state.extend(self.getInf(time))
+        state.extend(self.elev1.getInf(time))
+        state.extend(self.elev2.getInf(time))
+        reward =0
+        if(time>0):
+            reward = len(self.finishtime)*100/time-averageTime-maxTime
+        done = False
+        if(maxTime>300):
             done=True
-        else:
-            done=False
-        return np.array(state), reward, done, {}
+        return np.array(state) ,reward , done , {}
+    def getInf(self,time):
+        peo_num=[]
+        peo_time=[]
+        for floor_people in self.waitpeo:
+            peo_num.append(len(floor_people))
+            floor_time=[]
+            for people in floor_people:
+                floor_time.append(time-people.time)
+            if(len(floor_time)>0):
+                peo_time.append(round(sum(floor_time)/len(floor_time),4))
+            else:
+                peo_time.append(0)
+        Inf=[]
+        Inf.extend(peo_num)
+        Inf.extend(peo_time)       
+        return Inf 
     def control(self,time):
         status1=self.elev1.status
         status2=self.elev2.status
