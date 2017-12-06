@@ -23,7 +23,11 @@ last100Filled = False
 renderPerXEpochs = 50
 shouldRender = False
 
+<<<<<<< HEAD
 deepQ = DeepQ(52,9, memorySize, discountFactor, learningRate, learnStart)
+=======
+deepQ = DeepQ(1000,9, memorySize, discountFactor, learningRate, learnStart)
+>>>>>>> 7a58c3d15572ce0d825fdebd925066c3ef05ae4f
 deepQ.initNetworks([30,30,30])
 
 stepCounter = 0
@@ -34,8 +38,16 @@ for epoch in xrange(epochs):
     print (explorationRate)
     # number of timesteps
     for t in xrange(steps):
+<<<<<<< HEAD
     #    if epoch % renderPerXEpochs == 0 and shouldRender:
      #       env.render()
+=======
+        #Visualization
+        '''
+        if epoch % renderPerXEpochs == 0 and shouldRender:
+            env.render()
+        '''
+>>>>>>> 7a58c3d15572ce0d825fdebd925066c3ef05ae4f
         qValues = deepQ.getQValues(observation)
 
         action = deepQ.selectAction(qValues, explorationRate)
