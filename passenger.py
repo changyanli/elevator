@@ -20,7 +20,7 @@ class passenger:
         else:
             self.dir=1#up
 class passenger_generator:
-    def __init__(self,filename="newPassengerList.txt",stoptime=10000,appear_freq=1,appear_max_num=3,maxFloor=10):
+    def __init__(self,filename="newPassengerList.txt",stoptime=10000,appear_freq=1,appear_max_num=1,maxFloor=10):
         self.stoptime=stoptime
         self.appear_freq=appear_freq
         self.appear_max_num=appear_max_num
@@ -47,7 +47,7 @@ class passenger_generator:
         self.file.close()
     def get_passengers(self,time):
         passengers = []
-        while(self.passenger_list[0].time==time):
+        while(len(self.passenger_list)>0 and self.passenger_list[0].time==time):
             passengers.append(self.passenger_list.pop(0))
         return passengers
 if __name__ == "__main__":

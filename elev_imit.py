@@ -126,10 +126,10 @@ class elev_imit:
             time.sleep(0.1)
         """
     def main(self):
-        for i in range(0,100000):
+        for i in range(0,10000):
             #self.draw(i)
             self.sys.act(i)
-            if(i%10000 == 9999):
+            if(i%100 == 99):
                 print(i,self.sys._time_reward(i))
             #self.draw(i)
             #self.can.update()

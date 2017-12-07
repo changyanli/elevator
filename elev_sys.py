@@ -13,7 +13,7 @@ class elev_sys:
         self.downbtn=[False]*(self.maxfloor-1)
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
-        self.passenger_list=passenger_gnerator()
+        self.passenger_list=passenger_generator()
     def reset(self):
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
