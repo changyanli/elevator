@@ -5,10 +5,10 @@ from tkinter import *
 import elev_sys as system
 class elev_imit:
     def __init__(self):
-        self.Frame=Tk()
+        #self.Frame=Tk()
         self.sys=system.elev_sys()
-        self.can=Canvas(self.Frame, width=500, height=500)
-        self.can.pack()
+        #self.can=Canvas(self.Frame, width=500, height=500)
+        #self.can.pack()
         self.maxfloor=10 #B1~9F
         self.size=40
         self.floorpeo=[None]*self.maxfloor
@@ -17,7 +17,7 @@ class elev_imit:
         self.elev2 =[None]*self.maxfloor
         self.floor1 =[None]*self.maxfloor
         self.floor2 =[None]*self.maxfloor
-        self.predraw()
+        #self.predraw()
     def floorblock(self,num,floor):
         return [100+200*num , 50+self.size * (self.maxfloor-1-floor) , 100+self.size+200*num ,50+self.size * (self.maxfloor-floor)]
     def predraw(self):
@@ -126,15 +126,15 @@ class elev_imit:
             time.sleep(0.1)
         """
     def main(self):
-        for i in range(0,1000):
+        for i in range(0,100000):
             #self.draw(i)
             self.sys.act(i)
-            if(i%100 == 99):
+            if(i%10000 == 9999):
                 print(i,self.sys._time_reward(i))
             #self.draw(i)
             #self.can.update()
             #time.sleep(0.2)
-        self.Frame.mainloop()
+       # self.Frame.mainloop()
 if __name__ == "__main__":
     imitator=elev_imit()
     imitator.main()

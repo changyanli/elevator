@@ -63,8 +63,8 @@ class elev_sys:
         self.set_btn()
         self.elev1.move(self,time)
         self.elev2.move(self,time)
-        self.elev1.status=action //3
-        self.elev2.status=action % 3
+        self.elev1.status=action //3 -1
+        self.elev2.status=action % 3 -1
         averageTime , maxTime = self._time_reward(time)
         state=[averageTime,maxTime]
         state.extend(self.getInf(time))
@@ -72,9 +72,11 @@ class elev_sys:
         state.extend(self.elev2.getInf(time))
         reward =0
         if(time>0):
-            reward = len(self.finishtime)*100/time-averageTime-maxTime
+            reward = len(self.finishtime)*10000/time-averageTime
+        if(maxTime>180):
+            reward -=maxTime
         done = False
-        if(maxTime>300):
+        if(maxTime>240):
             done=True
         return np.array(state) ,reward , done , {}
     def getInf(self,time):
