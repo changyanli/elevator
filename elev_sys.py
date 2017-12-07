@@ -1,23 +1,9 @@
 import elevator as elev
+from passenger import passenger_generator
 import random
 from threading import Thread
 import numpy as np
 import time
-class passenger:
-    def __init__(self,time):
-        self.time=time
-        self.start=random.randint(0,9)#B1~9F
-        self.end=random.randint(0,9)
-        while(self.start==self.end):
-            self.end=random.randint(0,9)
-        if(self.start>self.end):
-            self.dir=-1#down
-        else:
-            self.dir=1#up
-    def get_time(self):
-        return self.time
-    def get_end(self):
-        return self.end
 class elev_sys:
     def __init__(self):
         self.maxfloor=10 #B1~9F
@@ -27,6 +13,7 @@ class elev_sys:
         self.downbtn=[False]*(self.maxfloor-1)
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
+        self.passenger_list=passenger_gnerator()
     def reset(self):
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -242,6 +229,6 @@ class elev_sys:
             peos.append(peo.time)
         return peos
     def peo_come(self,time):
-        if(random.randint(0,9)==1):
-            newpass =passenger(time)
+        newlist = self.passenger_list.get_passengers(time)
+        for newpass in newlist:
             self.waitpeo[newpass.start].append(newpass)
