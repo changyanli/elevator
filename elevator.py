@@ -70,7 +70,7 @@ class elevator:
                 i+=1
         passengers=[]
         i=0
-        while(i < len(sys.waitpeo[self.floor])):
+        while(i < len(sys.waitpeo[self.floor]) and len(self.passenger)<self.maximum):
             if(sys.waitpeo[self.floor][i].dir*self.status>=0):
                 passengers.append(sys.waitpeo[self.floor].pop(i))
             else:
@@ -80,8 +80,3 @@ class elevator:
     def setbtn(self):
         for p in self.passenger:
             self.floorbtn[p.end]=True
-    def still_work(self):
-        for i in self.floorbtn:
-            if(i):
-                return True
-        return False

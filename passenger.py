@@ -20,7 +20,7 @@ class passenger:
         else:
             self.dir=1#up
 class passenger_generator:
-    def __init__(self,filename="newPassengerList.txt",stoptime=10000,appear_freq=1,appear_max_num=1,maxFloor=10):
+    def __init__(self,filename="newPassengerList.txt",stoptime=10000,appear_freq=60,appear_max_num=12,maxFloor=10):
         self.stoptime=stoptime
         self.appear_freq=appear_freq
         self.appear_max_num=appear_max_num
@@ -33,7 +33,7 @@ class passenger_generator:
         self.findindex=0
     def generator(self):
         for time in range(self.stoptime):
-            if(time % self.appear_freq == 0):
+            if(random.randint(0,self.appear_freq-1) == 0):
                 for newpass in range(random.randint(0,self.appear_max_num)):
                     newpassenger = passenger(time,maxFloor=self.maxFloor)
                     self.file.write(str(time)+' '+str(newpassenger.start)+' '+str(newpassenger.end)+'\n')
@@ -54,6 +54,5 @@ if __name__ == "__main__":
     generator=passenger_generator()
     for time in range(generator.stoptime):
         passengers=generator.get_passengers(time)
-        #print(str(len(passengers)))
         for peo in passengers:
             print(''+str(peo.time)+' '+str(peo.start)+' '+str(peo.end))

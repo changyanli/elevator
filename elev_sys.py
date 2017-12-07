@@ -45,8 +45,8 @@ class elev_sys:
         self.elev1.move(self,time)
         self.elev2.move(self,time)
         status = self.control(time)
-        self.elev1.status=status//3
-        self.elev2.status=status%3
+        self.elev1.status=status//3-1
+        self.elev2.status=status%3-1
     def _step(self,action,time):
         self.peo_come(time)
         self.set_btn()

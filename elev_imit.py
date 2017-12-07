@@ -4,11 +4,8 @@ import tkinter as tk
 from tkinter import *
 import elev_sys as system
 class elev_imit:
-    def __init__(self):
-        #self.Frame=Tk()
+    def __init__(self,drawing=False):
         self.sys=system.elev_sys()
-        #self.can=Canvas(self.Frame, width=500, height=500)
-        #self.can.pack()
         self.maxfloor=10 #B1~9F
         self.size=40
         self.floorpeo=[None]*self.maxfloor
@@ -17,7 +14,12 @@ class elev_imit:
         self.elev2 =[None]*self.maxfloor
         self.floor1 =[None]*self.maxfloor
         self.floor2 =[None]*self.maxfloor
-        #self.predraw()
+        self.drawing=drawing
+        if drawing:
+            self.Frame=Tk()
+            self.can=Canvas(self.Frame, width=500, height=500)
+            self.can.pack()
+            self.predraw()
     def floorblock(self,num,floor):
         return [100+200*num , 50+self.size * (self.maxfloor-1-floor) , 100+self.size+200*num ,50+self.size * (self.maxfloor-floor)]
     def predraw(self):
@@ -127,14 +129,16 @@ class elev_imit:
         """
     def main(self):
         for i in range(0,10000):
-            #self.draw(i)
             self.sys.act(i)
             if(i%100 == 99):
                 print(i,self.sys._time_reward(i))
-            #self.draw(i)
-            #self.can.update()
-            #time.sleep(0.2)
-       # self.Frame.mainloop()
+            if(self.drawing):
+                self.draw(i)
+                self.can.update()
+                time.sleep(0.2)
+        if(self.drawing):
+            self.Frame.mainloop()
 if __name__ == "__main__":
     imitator=elev_imit()
+    #imitator=elev_imit(drawing=True)
     imitator.main()
