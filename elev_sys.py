@@ -57,7 +57,9 @@ class elev_sys:
         self.set_btn()
         self.elev1.move(self,time)
         self.elev2.move(self,time)
-        self.control(time)
+        status = self.control(time)
+        self.elev1.status=status//3
+        self.elev2.status=status%3
     def _step(self,action,time):
         self.peo_come(time)
         self.set_btn()
@@ -159,39 +161,10 @@ class elev_sys:
             self.elev1.status=0
         if(up2 == None and down2 == None):
             self.elev2.status=0
-        '''
-        if(self.elev1.status>0 and not self.search_up(self.elev1)):
-            if(self.search_down(self.elev1)):
-                self.elev1.status=-1
-            else:
-                self.elev1.status=0
-        elif(self.elev1.status<0 and not self.search_down(self.elev1)):
-            if(self.search_up(self.elev1)):
-                self.elev1.status=1
-            else:
-                self.elev1.status=0
-        elif(self.elev1.status==0):
-            if(self.search_up(self.elev1)):
-                self.elev1.status=1
-            elif(self.search_down(self.elev1)):
-                self.elev1.status=-1
-        if(self.elev2.status>0 and not self.search_up(self.elev2)):
-            if(self.search_down(self.elev2)):
-                self.elev2.status=-1
-            else:
-                self.elev2.status=0
-        elif(self.elev2.status<0 and not self.search_down(self.elev2)):
-            if(self.search_up(self.elev2)):
-                self.elev2.status=1
-            else:
-                self.elev2.status=0
-        elif(self.elev2.status==0):
-            if(self.search_up(self.elev2)):
-                self.elev2.status=1
-            elif(self.search_down(self.elev2)):
-                self.elev2.status=-1
-        
-        '''
+        newstatus=[self.elev1.status+1 , self.elev2.status+1]
+        self.elev1.status=status1
+        self.elev2.status=status2
+        return newstatus[0]*3+newstatus[1]
     def set_btn(self):
         for i in range(self.maxfloor):
             up=False;
