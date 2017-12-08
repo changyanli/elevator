@@ -24,13 +24,13 @@ class passenger_generator:
         self.stoptime=stoptime
         self.appear_freq=appear_freq
         self.appear_max_num=appear_max_num
-        self.maxFloor=maxFloor
-        if(filename == "newPassengerList.txt"): 
-            self.file=open(filename,'w')
+        self.filename=filename
+	self.maxFloor=maxFloor
+        if(self.filename == "newPassengerList.txt"): 
+            self.file=open(self.filename,'w')
             self.generator()
-        self.file=open(filename)
+        self.file=open(self.filename)
         self.reader()
-        self.findindex=0
     def generator(self):
         for time in range(self.stoptime):
             if(random.randint(0,self.appear_freq-1) == 0):
@@ -45,6 +45,10 @@ class passenger_generator:
             newpass=passenger(int(appearTime),startFloor=int(start),endFloor=int(end))
             self.passenger_list.append(newpass)
         self.file.close()
+    def reset(self):
+        del(self.passenger_list)
+        self.file=open(self.filename)
+        self.reader
     def get_passengers(self,time):
         passengers = []
         while(len(self.passenger_list)>0 and self.passenger_list[0].time==time):

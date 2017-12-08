@@ -23,6 +23,7 @@ class elev_sys:
         for i in range(self.maxfloor):
             self.waitpeo[i]=[]
         self.finishtime=[]
+        self.passenger_list.reset()
         return self._step(0,0)[0]
     def _time_reward(self,time):
         wait_time=[]
