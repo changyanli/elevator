@@ -131,14 +131,38 @@ class elev_imit:
         for i in range(0,10000):
             self.sys.act(i)
             if(i%100 == 99):
-                print(i,self.sys._time_reward(i))
+                print(i,self.sys._time_reward(i),len(self.sys.finishtime))
             if(self.drawing):
                 self.draw(i)
                 self.can.update()
                 time.sleep(0.2)
         if(self.drawing):
             self.Frame.mainloop()
+    def test_average(self,time = 1000):
+        totalAvr = totalAvr_oe=0
+        totalMax = totalMax_oe=0
+        totalFin = totalFin_oe=0
+        self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename)
+        for i in range(time):
+            for time in range(10000):
+                self.sys.act(time)
+                self.sys_odd_even.act_odd_even(time)
+            reward = self.sys._time_reward(9999)
+            totalAvr+=reward[0]
+            totalMax+=reward[1]
+            totalFin+=len(self.sys.finishtime)
+            reward_oe = self.sys_odd_even._time_reward(9999)
+            totalAvr+=reward_oe[0]
+            totalMax+=reward_oe[1]
+            totalFin+=len(self.sys_odd_even.finishtime)
+            print("main",reward[0],reward[1],len(self.sys.finishtime))
+            print("o&&e",reward_oe[0],reward_oe[1],len(self.sys_odd_even.finishtime))
+            self.sys=system.elev_sys()
+            self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename)
+        print("Total : ",totalAvr/1000,totalMax/1000,totalFin/1000)
+        
 if __name__ == "__main__":
     imitator=elev_imit()
     #imitator=elev_imit(drawing=True)
     imitator.main()
+    #imitator.test_average()
