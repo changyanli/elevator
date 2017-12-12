@@ -2,37 +2,62 @@ class elevator:
     def __init__(self,maxfloor=10): #B1~9F
         self.status=0  #    0:stop 1:up -1:down
         self.maxfloor=maxfloor
-        self.floor=1     #    default 1F 0=>B1
+        self._1f=1
+        self.floor=self._1f #default 1F 0=>B1
         self.passenger=[]
         self.maximum=12
-        self.maxvelocity=2  #frame/floor
-        self.minvelocity=4  #frame/floor
+        self.maxvelocity=2  #sec/floor
+        self.minvelocity=4  #sec/floor
         self.velocity=4
         self.moving=0
+        self.doorOC=2       #door opening and closing spend 2 seconds
         self.floorbtn=[False]*(self.maxfloor)
     def move(self,sys,time):
-        if(self.moving==0):
-            if(self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status))>0):
+        if self.moving == 0 :
+            if self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status)) > 0 :
+                if self.doorOC > 0 :
+                    self.doorOC -= 1
+                    return
                 self.reach_floor(sys,time)
-            self.floor+=self.status
-            if(self.floor<0):
-                self.floor=0
-            elif(self.floor>=self.maxfloor):
-                self.floor=self.maxfloor-1
-            nextfloor=self.floor+self.status
-            if(nextfloor<0):
-                nextfloor=0
-            elif(nextfloor>=self.maxfloor):
-                nextfloor=self.maxfloor-1
-            if(self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status))>0):
-                self.velocity=self.minvelocity
-            elif(self.velocity>self.maxvelocity):
-                self.velocity-=1
-            if(self.floorbtn[nextfloor] or len(sys.floor_peo(nextfloor,self.status))>0):
-                self.velocity+=1
-            self.moving=self.velocity
+                self.doorOC = 2
+                self.velocity = self.minvelocity
+            self.floor += self.status
+            if self.floor < 0 :
+                self.floor = 0
+            elif self.floor >= self.maxfloor :
+                self.floor = self.maxfloor-1
+            if self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status)) > 0 :
+                if self.velocity < self.minvelocity:
+                    self.velocity += 1
+            elif self.velocity > self.maxvelocity:
+                self.velocity -= 1
+            self.moving = self.velocity
         else:
-            self.moving-=1
+            self.moving -= 1
+    def move_odd_even(self,sys,time,oe):#oe = 1 if odd =0 if even
+        if self.moving == 0 :
+            if self.floor %2 == oe or self.floor == self._1f :
+                if self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status)) > 0 :
+                    if self.doorOC > 0 :
+                        self.doorOC -= 1
+                        return
+                    self.reach_floor(sys,time)
+                    self.doorOC = 2
+                    self.velocity = self.minvelocity
+            self.floor += self.status
+            if self.floor < 0 :
+                self.floor = 0
+            elif self.floor >= self.maxfloor :
+                self.floor = self.maxfloor-1
+            if self.floorbtn[self.floor] or len(sys.floor_peo(self.floor,self.status)) > 0 :
+                if self.floor %2 == oe or self.floor == self._1f :
+                    if self.velocity < self.minvelocity:
+                        self.velocity += 1
+            elif self.velocity > self.maxvelocity:
+                self.velocity -= 1
+            self.moving = self.velocity
+        else:
+            self.moving -= 1
     def getInf(self,time):
         etime=[]
         for peo in self.passenger:

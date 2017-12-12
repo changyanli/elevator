@@ -5,7 +5,7 @@ from threading import Thread
 import numpy as np
 import time
 class elev_sys:
-    def __init__(self):
+    def __init__(self,filename = None ):
         self.maxfloor=10 #B1~9F
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -13,7 +13,7 @@ class elev_sys:
         self.downbtn=[False]*(self.maxfloor-1)
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
-        self.passenger_list=passenger_generator()
+        self.passenger_list = passenger_generator(filename)
     def reset(self):
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -45,6 +45,14 @@ class elev_sys:
         self.set_btn()
         self.elev1.move(self,time)
         self.elev2.move(self,time)
+        status = self.control(time)
+        self.elev1.status=status//3-1
+        self.elev2.status=status%3-1
+    def act_odd_even(self,time):
+        self.peo_come(time)
+        self.set_btn()
+        self.elev1.move_odd_even(self,time,1)
+        self.elev2.move_odd_even(self,time,0)
         status = self.control(time)
         self.elev1.status=status//3-1
         self.elev2.status=status%3-1
@@ -122,7 +130,7 @@ class elev_sys:
         Inf=[]
         Inf.extend(peo_num)
         Inf.extend(peo_time)       
-        return Inf 
+        return Inf
     def control(self,time):
         status1=self.elev1.status
         status2=self.elev2.status
@@ -191,6 +199,10 @@ class elev_sys:
         self.elev1.status=status1
         self.elev2.status=status2
         return newstatus[0]*3+newstatus[1]
+    def control_odd_even(self,time):
+        status1=self.elev1.status
+        status2=self.elev2.status
+        
     def set_btn(self):
         for i in range(self.maxfloor):
             up=False;
@@ -204,7 +216,7 @@ class elev_sys:
                 self.upbtn[i]=up
             if(i>0):
                 self.downbtn[i-1]=down
-    def search_up(self,elev):
+    def search_up(self,elev,oddeven=-1):
         i=elev.floor
         while(i<self.maxfloor-1):
             if(self.downbtn[i]):
