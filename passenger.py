@@ -48,7 +48,7 @@ class passenger_generator:
     def reset(self):
         del(self.passenger_list)
         self.file=open(self.filename)
-        self.reader
+        self.reader()
     def get_passengers(self,time):
         passengers = []
         while(len(self.passenger_list)>0 and self.passenger_list[0].time==time):

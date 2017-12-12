@@ -56,19 +56,57 @@ class elev_sys:
         self.elev1.status=action //3 -1
         self.elev2.status=action % 3 -1
         averageTime , maxTime = self._time_reward(time)
-        state=[averageTime,maxTime]
+        state=[self.elev1.floor,self.elev2.floor]
+        '''
         state.extend(self.getInf(time))
         state.extend(self.elev1.getInf(time))
         state.extend(self.elev2.getInf(time))
-        reward =0
-        if(time>0):
-            reward = len(self.finishtime)*10000/time-averageTime
-        if(maxTime>180):
-            reward -=maxTime
+        '''
+        state.extend(self.up_and_down_degree())
+        reward = 50000*len(self.finishtime)-averageTime*time
         done = False
-        if(maxTime>240):
+        if(maxTime>1200):
             done=True
         return np.array(state) ,reward , done , {}
+    def up_and_down_degree(self):
+        # 0 1 2 3  [elev1 elev2] [up down]
+        # 4~maxfloor+3 floor[i] up
+        # maxfloor+4~2maxfloor+3 floor[i-1] down
+        maxTime=900
+        degree = []
+        up_degree = 0
+        down_degree =0
+        for peo in self.elev1.passenger:
+            if peo.dir > 0 : #up in elev1
+                up_degree += peo.time/maxTime
+            elif peo.dir <0 : #down in elev1
+                down_degree += peo.time/maxTime
+        degree.append(up_degree)
+        degree.append(down_degree)
+        up_degree = 0
+        down_degree =0
+        for peo in self.elev2.passenger:
+            if peo.dir > 0 : #up in elev2
+                up_degree+=peo.time/maxTime
+            elif peo.dir <0 : #down in elev2
+                down_degree+=peo.time/maxTime
+        degree.append(up_degree)
+        degree.append(down_degree)
+        up_degrees = []
+        down_degrees = []
+        for floor_peo in self.waitpeo:
+            up_degree=0
+            down_degree=0
+            for peo in floor_peo:
+                if peo.dir > 0 : #up
+                    up_degree += peo.time/maxTime
+                elif peo.dir <0:
+                    down_degree += peo.time/maxTime
+            up_degrees.append(up_degree)
+            down_degrees.append(down_degree)
+        degree.extend(up_degrees)
+        degree.extend(down_degrees)
+        return degree
     def getInf(self,time):
         peo_num=[]
         peo_time=[]
