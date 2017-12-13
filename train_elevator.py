@@ -2,8 +2,8 @@ from deepqnetwork import DeepQNetwork
 from elev_sys import elev_sys
 def train(env,RL):
     epoch_time = 5000
-    start_learn = 800
-    learn_freq = 100
+    start_learn = 500
+    learn_freq = 30
     step=0
     for epoch in range(epoch_time):
         #initial observation

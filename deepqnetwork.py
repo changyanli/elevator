@@ -8,7 +8,7 @@ tf.set_random_seed(1)
 class DeepQNetwork:
     def __init__(self,n_actions,n_features,learning_rate=0.01,
                  reward_decay=0.9,e_greedy=0.9,replace_target_iter=300,
-                 memory_size=1024,batch_size=128,e_greedy_increment=None,
+                 memory_size=2048,batch_size=128,e_greedy_increment=None,
                  output_graph=False):
         self.n_actions = n_actions
         self.n_features = n_features
@@ -98,31 +98,33 @@ class DeepQNetwork:
     
     def choose_action_with_probability(self, observation, bias = -1):
         observation = observation[np.newaxis, :]
-        qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-        shift = 0
-        for value in qValues[0]:
-            if value < shift :
-                shift = value
-        shift = -shift + 1e-06
-        qValueSum = 0
-        qValueProbabilities = []
-        i = 0
-        for value in qValues[0]:
-            if i==bias:
-                biasProbablity = 3
-            else:
-                biasProbablity = 1
-            qValueProbabilities.append(qValueSum + (value + bias)*biasProbablity)
-            qValueSum += (value + bias)*biasProbablity
-            i+=1
-        rand_action = random.uniform(0,qValueSum)
-        i = 0
-        for value in qValueProbabilities:
-            if rand_action <= value :
-                return i
-            i+=1
-        return i-1
-        
+        if np.random.uniform() < self.epsilon:
+            qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+            shift = 0
+            for value in qValues[0]:
+                if value < shift :
+                    shift = value
+            shift = -shift + 1e-06
+            qValueSum = 0
+            qValueProbabilities = []
+            i = 0
+            for value in qValues[0]:
+                if i==bias:
+                    biasProbablity = 5
+                else:
+                    biasProbablity = 1
+                qValueProbabilities.append(qValueSum + (value + bias)*biasProbablity)
+                qValueSum += (value + bias)*biasProbablity
+                i+=1
+            rand_action = random.uniform(0,qValueSum)
+            i = 0
+            for value in qValueProbabilities:
+                if rand_action <= value :
+                    return i
+                i+=1
+            return i-1
+        else:
+            return np.random.randint(0, self.n_actions)
     def learn(self):
         # check to replace target parameters
         if self.learn_step_counter % self.replace_target_iter == 0:

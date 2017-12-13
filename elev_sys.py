@@ -71,7 +71,7 @@ class elev_sys:
         state.extend(self.elev2.getInf(time))
         '''
         state.extend(self.up_and_down_degree())
-        reward = 50000*len(self.finishtime)-averageTime*time
+        reward = 10000*len(self.finishtime)-averageTime*time
         done = False
         if(maxTime>1200):
             done=True
