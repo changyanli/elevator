@@ -71,9 +71,9 @@ class elev_sys:
         state.extend(self.elev2.getInf(time))
         '''
         state.extend(self.up_and_down_degree())
-        reward = 10000*len(self.finishtime)-averageTime*time
+        reward = 5000*len(self.finishtime)-averageTime*time
         done = False
-        if(maxTime>1200):
+        if(maxTime>900):
             done=True
         return np.array(state) ,reward , done , {}
     def up_and_down_degree(self):
@@ -115,6 +115,17 @@ class elev_sys:
         degree.extend(up_degrees)
         degree.extend(down_degrees)
         return degree
+    def get_data_info(self):
+        self.reset()
+        num = len(self.passenger_list.passenger_list)
+        for time in range(10000):
+            self.act(time)
+        avrTime , maxTime = self._time_reward(10000)
+        info=[avrTime,maxTime]
+        info.append(len(self.finishtime))
+        info.append(num)
+        self.reset()
+        print info
     def getInf(self,time):
         peo_num=[]
         peo_time=[]

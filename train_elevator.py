@@ -2,9 +2,10 @@ from deepqnetwork import DeepQNetwork
 from elev_sys import elev_sys
 def train(env,RL):
     epoch_time = 5000
-    start_learn = 500
-    learn_freq = 30
+    start_learn = 400
+    learn_freq = 20
     step=0
+    env.get_data_info()
     for epoch in range(epoch_time):
         #initial observation
         observation = env.reset()
@@ -13,7 +14,10 @@ def train(env,RL):
             #RL choose action based on observation
 
             #action = RL.choose_action(observation)
-            action = RL.choose_action_with_probability(observation,bias=env.control(time))
+            if epoch < 1000:
+                action = RL.choose_action_with_probability(observation,bias=env.control(time),epoch=epoch)
+            else:
+                action = RL.choose_action_with_probability(observation)
             #RL take action and get next observation and reward
             newobservation, reward, done, info = env._step(action,time)
             RL.store_transition(observation, action, reward, newobservation)
