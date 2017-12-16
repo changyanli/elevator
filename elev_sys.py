@@ -65,13 +65,25 @@ class elev_sys:
         self.elev2.status=action % 3 -1
         averageTime , maxTime = self._time_reward(time)
         state=[self.elev1.floor,self.elev2.floor]
-        '''
+        
         state.extend(self.getInf(time))
         state.extend(self.elev1.getInf(time))
         state.extend(self.elev2.getInf(time))
-        '''
+        
         state.extend(self.up_and_down_degree())
-        reward = 5000*len(self.finishtime)-averageTime*time
+        
+        if averageTime < 60 :
+            if time > 120 and len(self.finishtime)>100:
+                reward = 1
+            else :
+                reward = 0
+        elif averageTime < 100 :
+            if time >120 :
+                reward = (900-maxTime)/800
+            else :
+                reward = 0
+        else :
+            reward = -1+ (600-averageTime)/800
         done = False
         if(maxTime>900):
             done=True

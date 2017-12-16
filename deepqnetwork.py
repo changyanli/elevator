@@ -7,7 +7,7 @@ np.random.seed(1)
 tf.set_random_seed(1)
 class DeepQNetwork:
     def __init__(self,n_actions,n_features,learning_rate=0.01,
-                 reward_decay=0.9,e_greedy=0.99,replace_target_iter=300,
+                 reward_decay=0.9,e_greedy=0.95,replace_target_iter=300,
                  memory_size=2048,batch_size=128,e_greedy_increment=None,
                  output_graph=False):
         self.n_actions = n_actions
@@ -96,7 +96,7 @@ class DeepQNetwork:
             action = np.random.randint(0, self.n_actions)
         return action
     
-    def choose_action_with_probability(self, observation, bias = -1,epoch=999):
+    def choose_action_with_probability(self, observation, bias = -1):
         observation = observation[np.newaxis, :]
         if np.random.uniform() < self.epsilon:
             qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
@@ -109,13 +109,13 @@ class DeepQNetwork:
             qValueProbabilities = []
             i = 0
             for value in qValues[0]:
-                if i==bias:
-                    biasProbablity = 1000-epoch
+                if i == bias:
+                    biasProbablity = 3
                 else:
                     biasProbablity = 1
                 qValueProbabilities.append(qValueSum + (value + bias)*biasProbablity)
                 qValueSum += (value + bias)*biasProbablity
-                i+=1
+                i += 1
             rand_action = random.uniform(0,qValueSum)
             i = 0
             for value in qValueProbabilities:
