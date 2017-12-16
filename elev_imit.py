@@ -151,17 +151,17 @@ class elev_imit:
             totalMax+=reward[1]
             totalFin+=len(self.sys.finishtime)
             reward_oe = self.sys_odd_even._time_reward(9999)
-            totalAvr+=reward_oe[0]
-            totalMax+=reward_oe[1]
-            totalFin+=len(self.sys_odd_even.finishtime)
+            totalAvr_oe+=reward_oe[0]
+            totalMax_oe+=reward_oe[1]
+            totalFin_oe+=len(self.sys_odd_even.finishtime)
             print("main",reward[0],reward[1],len(self.sys.finishtime))
             print("o&&e",reward_oe[0],reward_oe[1],len(self.sys_odd_even.finishtime))
             self.sys=system.elev_sys(oddeven=True)
             self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True)
-        print("Total : ",totalAvr/1000,totalMax/1000,totalFin/1000)
-        
+        print("Totalmain : ",totalAvr/times,totalMax/times,totalFin/times)
+        print("Totalo&&e : ",totalAvr_oe/times,totalMax_oe/times,totalFin_oe/times)
 if __name__ == "__main__":
-    imitator=elev_imit(oddeven=True,drawing=True)
+    imitator=elev_imit(oddeven=True)
     #imitator=elev_imit(drawing=True)
     #imitator.main()
     imitator.test_average()

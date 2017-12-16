@@ -121,7 +121,7 @@ class DuelingDQN:
             action = np.random.randint(0, self.n_actions)
         return action
     
-    def choose_action_with_probability(self, observation, bias= -1,epoch=999):
+    def choose_action_with_probability(self, observation, bias= -1,epoch=1000):
         observation = observation[np.newaxis, :]
         if np.random.uniform() <self.epsilon:
             qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})

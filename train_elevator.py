@@ -13,8 +13,8 @@ def train(env,RL):
         time = 0
         while True:
             #RL choose action based on observation
-            #action = RL.choose_action(observation)
-            action = RL.choose_action_with_probability(observation,bias=env.control(time),epoch = epoch)
+            action = RL.choose_action(observation)
+            #action = RL.choose_action_with_probability(observation,bias=env.control(time),epoch = epoch)
             #RL take action and get next observation and reward
             newobservation, reward, done, info = env._step(action,time)
             RL.store_transition(observation, action, reward, newobservation)
@@ -34,5 +34,5 @@ def train(env,RL):
 if __name__ == "__main__":
     env = elev_sys()
     #RL = DeepQNetwork(9,len(env._step(0,0)[0]),e_greedy_increment=0.01)
-    RL = DuelingDQN(9,len(env._step(0,0)[0]),memory_size=4000,learning_rate=0.0000625)
+    RL = DuelingDQN(9,len(env._step(0,0)[0]),memory_size=2000)
     train(env,RL)
