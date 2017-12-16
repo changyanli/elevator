@@ -5,7 +5,7 @@ from threading import Thread
 import numpy as np
 import time
 class elev_sys:
-    def __init__(self,filename = None ):
+    def __init__(self,filename = None,oddeven = False):
         self.maxfloor=10 #B1~9F
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -13,7 +13,7 @@ class elev_sys:
         self.downbtn=[False]*(self.maxfloor-1)
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
-        self.passenger_list = passenger_generator(filename)
+        self.passenger_list = passenger_generator(filename,oddeven=oddeven)
     def reset(self):
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -45,7 +45,7 @@ class elev_sys:
         self.set_btn()
         self.elev1.move(self,time)
         self.elev2.move(self,time)
-        status = self.control(time)
+        status = self.control()
         self.elev1.status=status//3-1
         self.elev2.status=status%3-1
     def act_odd_even(self,time):
@@ -53,7 +53,7 @@ class elev_sys:
         self.set_btn()
         self.elev1.move_odd_even(self,time,1)
         self.elev2.move_odd_even(self,time,0)
-        status = self.control(time)
+        status = self.control(1,0)
         self.elev1.status=status//3-1
         self.elev2.status=status%3-1
     def _step(self,action,time):
@@ -154,13 +154,13 @@ class elev_sys:
         Inf.extend(peo_num)
         Inf.extend(peo_time)       
         return Inf
-    def control(self,time):
+    def control(self , elev1_type = -1 , elev2_type = -1):
         status1=self.elev1.status
         status2=self.elev2.status
-        up1=self.search_up(self.elev1)
-        up2=self.search_up(self.elev2)
-        down1=self.search_down(self.elev1)
-        down2=self.search_down(self.elev2)
+        up1=self.search_up(self.elev1,elev1_type)
+        up2=self.search_up(self.elev2,elev2_type)
+        down1=self.search_down(self.elev1,elev1_type)
+        down2=self.search_down(self.elev2,elev2_type)
         if(self.elev1.floor==0 or self.elev1.floor==self.maxfloor-1):
             self.elev1.status=0
         if(self.elev2.floor==0 or self.elev2.floor==self.maxfloor-1):
@@ -222,10 +222,7 @@ class elev_sys:
         self.elev1.status=status1
         self.elev2.status=status2
         return newstatus[0]*3+newstatus[1]
-    def control_odd_even(self,time):
-        status1=self.elev1.status
-        status2=self.elev2.status
-        
+
     def set_btn(self):
         for i in range(self.maxfloor):
             up=False;
@@ -239,34 +236,38 @@ class elev_sys:
                 self.upbtn[i]=up
             if(i>0):
                 self.downbtn[i-1]=down
-    def search_up(self,elev,oddeven=-1):
+    def search_up(self,elev,oddeven = -1 ): #Don't care => -1, odd => 0, even => 1
         i=elev.floor
         while(i<self.maxfloor-1):
-            if(self.downbtn[i]):
-                return i-elev.floor+1
-            elif(i>elev.floor and self.upbtn[i]):
-                return i-elev.floor
+            if i == 1 or i % 2 != oddeven:
+                if self.downbtn[i] :
+                    return i-elev.floor+1
+                elif(i>elev.floor and self.upbtn[i]):
+                    return i-elev.floor
             i+=1
         if(elev.status>-1):
             i=elev.floor
             while(i<self.maxfloor):
-                if(elev.floorbtn[i]):
-                    return i-elev.floor
+                if i == 1 or i % 2 != oddeven:
+                    if(elev.floorbtn[i]):
+                        return i-elev.floor
                 i+=1
         return None
-    def search_down(self,elev):
+    def search_down(self,elev,oddeven = -1):#Don't care => -1,odd => 0,even => 1
         i=elev.floor-1
         while(i>=0):
-            if(self.upbtn[i]):
-                return elev.floor-i
-            elif(i<elev.floor-1 and self.downbtn[i]):
-                return elev.floor-i+1
+            if i == 1 or i % 2 != oddeven:
+                if(self.upbtn[i]):
+                    return elev.floor-i
+                elif(i<elev.floor-1 and self.downbtn[i]):
+                    return elev.floor-i+1
             i-=1
         if(elev.status<1):
             i=elev.floor
             while(i>=0):
-                if(elev.floorbtn[i]):
-                    return elev.floor-i
+                if i == 1 or i % 2 != oddeven:
+                    if(elev.floorbtn[i]):
+                        return elev.floor-i
                 i-=1
         return None              
     def floor_peo(self,floor,ud):#ud =1 up -1 down

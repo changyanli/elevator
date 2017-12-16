@@ -4,8 +4,8 @@ import tkinter as tk
 from tkinter import *
 import elev_sys as system
 class elev_imit:
-    def __init__(self,drawing=False):
-        self.sys=system.elev_sys()
+    def __init__(self,drawing=False,oddeven=False):
+        self.sys=system.elev_sys(oddeven=oddeven)
         self.maxfloor=10 #B1~9F
         self.size=40
         self.floorpeo=[None]*self.maxfloor
@@ -142,7 +142,7 @@ class elev_imit:
         totalAvr = totalAvr_oe=0
         totalMax = totalMax_oe=0
         totalFin = totalFin_oe=0
-        self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename)
+        self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True)
         for i in range(time):
             for time in range(10000):
                 self.sys.act(time)
@@ -162,7 +162,7 @@ class elev_imit:
         print("Total : ",totalAvr/1000,totalMax/1000,totalFin/1000)
         
 if __name__ == "__main__":
-    imitator=elev_imit()
+    imitator=elev_imit(oddeven=True)
     #imitator=elev_imit(drawing=True)
-    imitator.main()
-    #imitator.test_average()
+    #imitator.main()
+    imitator.test_average()

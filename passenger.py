@@ -2,7 +2,7 @@ import random
 from threading import Thread
 import time
 class passenger:
-    def __init__(self,appearTime,maxFloor=10,startFloor=None,endFloor=None):
+    def __init__(self,appearTime,maxFloor=10,startFloor=None,endFloor=None,oddeven=False):
         self.time=appearTime
         if(startFloor==None):
             self.start=random.randint(0,maxFloor-1)
@@ -15,12 +15,18 @@ class passenger:
         #endfloor should be different with startfloor
         while(self.start==self.end):
             self.end=random.randint(0,maxFloor-1)
+        if oddeven:
+            if self.start != 1 and self.end != 1 and self.start % 2 != self.end %2:
+                if self.start % 2 == 0:
+                    self.start = 1
+                else:
+                    self.end = 1
         if(self.start>self.end):
             self.dir=-1#down
         else:
             self.dir=1#up
 class passenger_generator:
-    def __init__(self,filename=None,stoptime=10000,appear_freq=60,appear_max_num=12,maxFloor=10):
+    def __init__(self,filename=None,stoptime=10000,appear_freq=60,appear_max_num=12,maxFloor=10,oddeven = False):
         self.stoptime=stoptime
         self.appear_freq=appear_freq
         self.appear_max_num=appear_max_num
@@ -29,14 +35,14 @@ class passenger_generator:
         if(self.filename == None):
             self.filename = "newPassengerList.txt"
             self.file=open(self.filename,'w')
-            self.generator()
+            self.generator(oddeven=oddeven)
         self.file=open(self.filename)
         self.reader()
-    def generator(self):
+    def generator(self,oddeven=False):
         for time in range(self.stoptime):
             if(random.randint(0,self.appear_freq-1) == 0):
                 for newpass in range(random.randint(0,self.appear_max_num)):
-                    newpassenger = passenger(time,maxFloor=self.maxFloor)
+                    newpassenger = passenger(time,maxFloor=self.maxFloor,oddeven=oddeven)
                     self.file.write(str(time)+' '+str(newpassenger.start)+' '+str(newpassenger.end)+'\n')
         self.file.close()
     def reader(self):
