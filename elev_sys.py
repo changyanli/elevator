@@ -53,7 +53,7 @@ class elev_sys:
         self.set_btn()
         self.elev1.move_odd_even(self,time,1)
         self.elev2.move_odd_even(self,time,0)
-        status = self.control(1,0)
+        status = self.control(0,1)
         self.elev1.status=status//3-1
         self.elev2.status=status%3-1
     def _step(self,action,time):
@@ -137,7 +137,7 @@ class elev_sys:
         info.append(len(self.finishtime))
         info.append(num)
         self.reset()
-        print info
+        print (info)
     def getInf(self,time):
         peo_num=[]
         peo_time=[]
@@ -239,11 +239,10 @@ class elev_sys:
     def search_up(self,elev,oddeven = -1 ): #Don't care => -1, odd => 0, even => 1
         i=elev.floor
         while(i<self.maxfloor-1):
-            if i == 1 or i % 2 != oddeven:
-                if self.downbtn[i] :
-                    return i-elev.floor+1
-                elif(i>elev.floor and self.upbtn[i]):
-                    return i-elev.floor
+            if (i == 0 or (i+1) % 2 != oddeven) and self.downbtn[i] :
+                return i-elev.floor+1
+            elif (i == 1 or i % 2 != oddeven) and i>elev.floor and self.upbtn[i]:
+                return i-elev.floor
             i+=1
         if(elev.status>-1):
             i=elev.floor
@@ -256,11 +255,10 @@ class elev_sys:
     def search_down(self,elev,oddeven = -1):#Don't care => -1,odd => 0,even => 1
         i=elev.floor-1
         while(i>=0):
-            if i == 1 or i % 2 != oddeven:
-                if(self.upbtn[i]):
-                    return elev.floor-i
-                elif(i<elev.floor-1 and self.downbtn[i]):
-                    return elev.floor-i+1
+            if (i == 1 or i % 2 != oddeven) and self.upbtn[i]:
+                return elev.floor-i
+            elif (i == 0 or (i+1) % 2 != oddeven) and i<elev.floor-1 and self.downbtn[i]:
+                return elev.floor-i+1
             i-=1
         if(elev.status<1):
             i=elev.floor

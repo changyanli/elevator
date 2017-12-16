@@ -41,7 +41,7 @@ class elevator:
                     if self.doorOC > 0 :
                         self.doorOC -= 1
                         return
-                    self.reach_floor(sys,time)
+                    self.reach_floor(sys,time,1-oe)
                     self.doorOC = 2
                     self.velocity = self.minvelocity
             self.floor += self.status
@@ -83,7 +83,7 @@ class elevator:
              return True
         else:
              return False
-    def reach_floor(self,sys,time):
+    def reach_floor(self,sys,time,oe=-1):#oe = -1 if don't care ,0 if odd ,1 if even
         self.floorbtn[self.floor]=False;
         i=0
         while(i < len(self.passenger)):
@@ -96,7 +96,8 @@ class elevator:
         passengers=[]
         i=0
         while(i < len(sys.waitpeo[self.floor]) and len(self.passenger)<self.maximum):
-            if(sys.waitpeo[self.floor][i].dir*self.status>=0):
+            peo = sys.waitpeo[self.floor][i]
+            if peo.dir*self.status >= 0 and (peo.end == 1 or peo.end % 2 != oe):
                 passengers.append(sys.waitpeo[self.floor].pop(i))
             else:
                 i+=1
