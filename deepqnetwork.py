@@ -7,8 +7,8 @@ np.random.seed(1)
 tf.set_random_seed(1)
 class DeepQNetwork:
     def __init__(self,n_actions,n_features,learning_rate=0.01,
-                 reward_decay=0.9,e_greedy=0.95,replace_target_iter=300,
-                 memory_size=2048,batch_size=128,e_greedy_increment=None,
+                 reward_decay=0.9,e_greedy=0.9,replace_target_iter=300,
+                 memory_size=3000,batch_size=32,e_greedy_increment=None,
                  output_graph=False):
         self.n_actions = n_actions
         self.n_features = n_features
@@ -57,12 +57,12 @@ class DeepQNetwork:
 
         # ------------------ build evaluate_net ------------------
         with tf.variable_scope('eval_net'):
-            e1 = tf.layers.dense(self.s, 128, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='e1')
+            e1 = tf.layers.dense(self.s, 50, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='e1')
             self.q_eval = tf.layers.dense(e1, self.n_actions, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='q')
 
         # ------------------ build target_net ------------------
         with tf.variable_scope('target_net'):
-            t1 = tf.layers.dense(self.s_, 128, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t1')
+            t1 = tf.layers.dense(self.s_, 50, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t1')
             self.q_next = tf.layers.dense(t1, self.n_actions, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t2')
         with tf.variable_scope('q_target'):
             q_target = self.r + self.gamma * tf.reduce_max(self.q_next, axis=1, name='Qmax_s_')    # shape=(None, )
@@ -96,35 +96,33 @@ class DeepQNetwork:
             action = np.random.randint(0, self.n_actions)
         return action
     
-    def choose_action_with_probability(self, observation, bias = -1):
+    def choose_action_with_probability(self, observation, bias = -1,epoch = 1000):
         observation = observation[np.newaxis, :]
-        if np.random.uniform() < self.epsilon:
-            qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-            shift = 0
-            for value in qValues[0]:
-                if value < shift :
-                    shift = value
-            shift = -shift + 1e-06
-            qValueSum = 0
-            qValueProbabilities = []
-            i = 0
-            for value in qValues[0]:
-                if i == bias:
-                    biasProbablity = 3
-                else:
-                    biasProbablity = 1
-                qValueProbabilities.append(qValueSum + (value + bias)*biasProbablity)
-                qValueSum += (value + bias)*biasProbablity
-                i += 1
-            rand_action = random.uniform(0,qValueSum)
-            i = 0
-            for value in qValueProbabilities:
-                if rand_action <= value :
-                    return i
-                i+=1
-            return i-1
-        else:
-            return np.random.randint(0, self.n_actions)
+        qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+        shift = 0
+        for value in qValues[0]:
+            if value < shift :
+                shift = value
+        shift = -shift + 1e-06
+        qValueSum = 0
+        qValueProbabilities = []
+        i = 0
+        for value in qValues[0]:
+            if i == bias and epoch < 1000:
+                biasProbablity = 1000 - epoch
+            else:
+                biasProbablity = 1
+            qValueProbabilities.append(qValueSum + (value + shift)*biasProbablity)
+            qValueSum += (value + shift)*biasProbablity
+            i += 1
+        rand_action = random.uniform(0,qValueSum)
+        i = 0
+        for value in qValueProbabilities:
+            if rand_action <= value :
+                return i
+            i+=1
+        return i-1
+    
     def learn(self):
         # check to replace target parameters
         if self.learn_step_counter % self.replace_target_iter == 0:

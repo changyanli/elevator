@@ -73,26 +73,31 @@ class elev_sys:
         state.extend(self.up_and_down_degree())
         
         if averageTime < 60 :
-            if time > 120 and len(self.finishtime)>100:
+            if len(self.finishtime)>100:
                 reward = 1
             else :
-                reward = 0
-        elif averageTime < 100 :
-            if time >120 :
-                reward = (900-maxTime)/800
+                reward = len(self.finishtime)/200
+        elif averageTime < 120 :
+            if len(self.finishtime)>100:
+                reward = (600-maxTime)/600
             else :
-                reward = 0
+                reward = len(self.finishtime)/400
         else :
-            reward = -1+ (600-averageTime)/800
+            if len(self.finishtime)>100:
+                reward = -1+ (600-averageTime)/500
+            else :
+                reward = -1+ len(self.finishtime)/400
+        
+        #reward = 5000 * len(self.finishtime) - averageTime * averageTime - maxTime*100
         done = False
-        if(maxTime>900):
+        if(maxTime>600):
             done=True
         return np.array(state) ,reward , done , {}
     def up_and_down_degree(self):
         # 0 1 2 3  [elev1 elev2] [up down]
         # 4~maxfloor+3 floor[i] up
         # maxfloor+4~2maxfloor+3 floor[i-1] down
-        maxTime=900
+        maxTime=600
         degree = []
         up_degree = 0
         down_degree =0

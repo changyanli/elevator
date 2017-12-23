@@ -87,7 +87,7 @@ class DuelingDQN:
         self.q_target = tf.placeholder(tf.float32, [None, self.n_actions], name='Q_target')  # for calculating loss
         with tf.variable_scope('eval_net'):
             c_names, n_l1, w_initializer, b_initializer = \
-                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 20, \
+                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 200, \
                 tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1)  # config of layers
 
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
@@ -121,35 +121,32 @@ class DuelingDQN:
             action = np.random.randint(0, self.n_actions)
         return action
     
-    def choose_action_with_probability(self, observation, bias= -1,epoch=1000):
+    def choose_action_with_probability(self, observation, bias= -1,epoch = 1000):
         observation = observation[np.newaxis, :]
-        if np.random.uniform() <self.epsilon:
-            qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-            shift = 0
-            for value in qValues[0]:
-                if value < shift :
-                    shift = value
-            shift = -shift + 1e-06
-            qValueSum = 0
-            qValueProbabilities = []
-            i = 0
-            for value in qValues[0]:
-                if i == bias and epoch < 1000:
-                    biasProbablity = 1000 - epoch
-                else:
-                    biasProbablity = 1
-                qValueProbabilities.append(qValueSum + (value + bias)*biasProbablity)
-                qValueSum += (value + bias)*biasProbablity
-                i += 1
-            rand_action = random.uniform(0,qValueSum)
-            i = 0
-            for value in qValueProbabilities:
-                if rand_action <= value :
-                    return i
-                i+=1
-            return i-1
-        else:
-            return np.random.randint(0, self.n_actions)
+        qValues = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+        shift = 0
+        for value in qValues[0]:
+            if value < shift :
+                shift = value
+        shift = -shift + 1e-06
+        qValueSum = 0
+        qValueProbabilities = []
+        i = 0
+        for value in qValues[0]:
+            if i == bias and epoch < 1500 :
+                biasProbablity = 1500-epoch
+            else:
+                biasProbablity = 1
+            qValueProbabilities.append(qValueSum + (value + shift)*biasProbablity)
+            qValueSum += (value + shift)*biasProbablity
+            i += 1
+        rand_action = random.uniform(0,qValueSum)
+        i = 0
+        for value in qValueProbabilities:
+            if rand_action <= value :
+                return i
+            i+=1
+        return i-1
 
     def learn(self):
         if self.learn_step_counter % self.replace_target_iter == 0:
