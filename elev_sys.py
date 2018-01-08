@@ -95,14 +95,14 @@ class elev_sys:
         
         #reward = 5000 * len(self.finishtime) - averageTime * averageTime - maxTime*100
         done = False
-        if(maxTime>600):
+        if(maxTime>900):
             done=True
         return np.array(state) ,reward , done , {}
     def up_and_down_degree(self,time):
         # 0 1 2 3  [elev1 elev2] [up down]
         # 4~maxfloor+3 floor[i] up
         # maxfloor+4~2maxfloor+3 floor[i-1] down
-        maxTime=600.
+        maxTime=900.
         degree = []
         up_degree = 0
         down_degree =0
