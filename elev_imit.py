@@ -4,9 +4,10 @@ import tkinter as tk
 from tkinter import *
 import elev_sys as system
 class elev_imit:
-    def __init__(self,drawing=False,oddeven=False):
-        self.sys=system.elev_sys(oddeven=oddeven)
-        self.maxfloor=10 #B1~9F
+    def __init__(self,drawing=False,oddeven=False,maxFloor =10, num = 0, freq = 60, appnum=12):
+        self.maxfloor=maxFloor #B1~9F
+        self.num = num
+        self.sys=system.elev_sys(oddeven=oddeven,maxFloor=self.maxfloor,num=self.num,freq=freq,appnum=appnum)
         self.size=40
         self.floorpeo=[None]*self.maxfloor
         self.peotext=[None]*self.maxfloor
@@ -15,6 +16,9 @@ class elev_imit:
         self.floor1 =[None]*self.maxfloor
         self.floor2 =[None]*self.maxfloor
         self.drawing=drawing
+        self.oddeven=oddeven
+        self.freq=freq
+        self.appnum=appnum
         if drawing:
             self.Frame=Tk()
             self.can=Canvas(self.Frame, width=500, height=500)
@@ -129,7 +133,10 @@ class elev_imit:
         """
     def main(self):
         for i in range(0,10000):
-            self.sys.act_odd_even(i)
+            if self.oddeven :
+                self.sys.act_odd_even(i)
+            else :
+                self.sys.act(i)
             if(i%100 == 99):
                 print(i,self.sys._time_reward(i),len(self.sys.finishtime))
             if(self.drawing):
@@ -141,7 +148,7 @@ class elev_imit:
         totalAvr = totalAvr_oe=0
         totalMax = totalMax_oe=0
         totalFin = totalFin_oe=0
-        self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True)
+        self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True,maxFloor=self.maxfloor,num=self.num,freq=self.freq,appnum=self.appnum)
         for i in range(times):
             for t in range(10000):
                 self.sys.act(t)
@@ -154,14 +161,20 @@ class elev_imit:
             totalAvr_oe+=reward_oe[0]
             totalMax_oe+=reward_oe[1]
             totalFin_oe+=len(self.sys_odd_even.finishtime)
-            print("main",reward[0],reward[1],len(self.sys.finishtime))
-            print("o&&e",reward_oe[0],reward_oe[1],len(self.sys_odd_even.finishtime))
-            self.sys=system.elev_sys(oddeven=True)
-            self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True)
+            #print("main",reward[0],reward[1],len(self.sys.finishtime))
+            #print("o&&e",reward_oe[0],reward_oe[1],len(self.sys_odd_even.finishtime))
+            self.sys=system.elev_sys(oddeven=True,maxFloor=self.maxfloor,num=self.num,freq=self.freq,appnum=self.appnum)
+            self.sys_odd_even=system.elev_sys(filename=self.sys.passenger_list.filename,oddeven=True,maxFloor=self.maxfloor,num=self.num,freq=self.freq,appnum=self.appnum)
         print("Totalmain : ",totalAvr/times,totalMax/times,totalFin/times)
         print("Totalo&&e : ",totalAvr_oe/times,totalMax_oe/times,totalFin_oe/times)
 if __name__ == "__main__":
-    imitator=elev_imit(oddeven=True)
+    #imitator=elev_imit(oddeven=True)
     #imitator=elev_imit(drawing=True)
     #imitator.main()
-    imitator.test_average()
+    #imitator.test_average()
+    
+    for floor in range(7,31):
+        print("Floor ",floor)
+        imitator = elev_imit(oddeven=True,maxFloor=floor,num=5)
+        imitator.test_average()
+    

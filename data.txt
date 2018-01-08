@@ -1,62 +1,14 @@
-2017-12-23 21:52:57.432237: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
-2017-12-23 21:52:57.743333: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 0 with properties: 
-name: GeForce GTX 1080 major: 6 minor: 1 memoryClockRate(GHz): 1.835
-pciBusID: 0000:02:00.0
-totalMemory: 7.92GiB freeMemory: 6.11GiB
-2017-12-23 21:52:57.974954: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 1 with properties: 
-name: GeForce GTX 1080 major: 6 minor: 1 memoryClockRate(GHz): 1.835
-pciBusID: 0000:82:00.0
-totalMemory: 7.92GiB freeMemory: 7.81GiB
-2017-12-23 21:52:57.975165: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Device peer to peer matrix
-2017-12-23 21:52:57.975198: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1051] DMA: 0 1 
-2017-12-23 21:52:57.975206: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 0:   Y N 
-2017-12-23 21:52:57.975211: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 1:   N Y 
-2017-12-23 21:52:57.975222: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:0) -> (device: 0, name: GeForce GTX 1080, pci bus id: 0000:02:00.0, compute capability: 6.1)
-2017-12-23 21:52:57.975228: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:1) -> (device: 1, name: GeForce GTX 1080, pci bus id: 0000:82:00.0, compute capability: 6.1)
-[58.0, 197, 886, 886]
-Epoch 0 finished after 820 step with average time 240.0 and finished 38 people. Total reward:-375
-Epoch 10 finished after 793 step with average time 230.0 and finished 37 people. Total reward:-338
-Epoch 20 finished after 793 step with average time 271.0 and finished 27 people. Total reward:-398
-
-target_params_replaced
-
-Epoch 30 finished after 793 step with average time 245.0 and finished 42 people. Total reward:-309
-Epoch 40 finished after 793 step with average time 274.0 and finished 23 people. Total reward:-311
-Epoch 50 finished after 793 step with average time 232.0 and finished 32 people. Total reward:-257
-Epoch 60 finished after 611 step with average time 286.0 and finished 7 people. Total reward:-364
-Epoch 70 finished after 611 step with average time 249.0 and finished 13 people. Total reward:-262
-Epoch 80 finished after 611 step with average time 287.0 and finished 10 people. Total reward:-391
-Epoch 90 finished after 1102 step with average time 227.0 and finished 79 people. Total reward:-769
-Epoch 100 finished after 827 step with average time 178.0 and finished 68 people. Total reward:-543
-Epoch 110 finished after 1234 step with average time 166.0 and finished 116 people. Total reward:-715.728
-Epoch 120 finished after 820 step with average time 182.0 and finished 65 people. Total reward:-423
-Last100 average finished after 738 step with time 239.02 finished 37 people
-Epoch 130 finished after 611 step with average time 219.0 and finished 30 people. Total reward:-308
-Epoch 140 finished after 947 step with average time 216.0 and finished 71 people. Total reward:-502
-Last100 average finished after 709 step with time 229.25 finished 38 people
-Epoch 150 finished after 611 step with average time 193.0 and finished 25 people. Total reward:-190
-Epoch 160 finished after 842 step with average time 244.0 and finished 21 people. Total reward:-367
-Last100 average finished after 722 step with time 217.61 finished 41 people
-Epoch 170 finished after 1620 step with average time 215.0 and finished 121 people. Total reward:-846.274
-Epoch 180 finished after 842 step with average time 227.0 and finished 43 people. Total reward:-424
-Last100 average finished after 801 step with time 216.49 finished 45 people
-Epoch 190 finished after 842 step with average time 257.0 and finished 38 people. Total reward:-416
-Epoch 200 finished after 896 step with average time 204.0 and finished 43 people. Total reward:-459
-Last100 average finished after 834 step with time 221.1 finished 42 people
-Epoch 210 finished after 842 step with average time 273.0 and finished 16 people. Total reward:-361
-Epoch 220 finished after 1001 step with average time 176.0 and finished 43 people. Total reward:-484
-Last100 average finished after 864 step with time 233.25 finished 40 people
-Epoch 230 finished after 1453 step with average time 213.0 and finished 147 people. Total reward:-336.076
-Epoch 240 finished after 691 step with average time 196.0 and finished 80 people. Total reward:-331
-Last100 average finished after 906 step with time 234.54 finished 45 people
-Epoch 250 finished after 1145 step with average time 166.0 and finished 125 people. Total reward:-102.136
-Epoch 260 finished after 691 step with average time 237.0 and finished 29 people. Total reward:-285
-Last100 average finished after 891 step with time 246.69 finished 43 people
-Epoch 270 finished after 828 step with average time 243.0 and finished 57 people. Total reward:-320
-Epoch 280 finished after 691 step with average time 265.0 and finished 14 people. Total reward:-265
-Last100 average finished after 851 step with time 243.1 finished 46 people
-Epoch 290 finished after 682 step with average time 280.0 and finished 7 people. Total reward:-333
-Epoch 300 finished after 691 step with average time 239.0 and finished 26 people. Total reward:-274
-Last100 average finished after 820 step with time 242.41 finished 49 people
-Epoch 310 finished after 916 step with average time 186.0 and finished 89 people. Total reward:-250
-Epoch 320 finished after 691 step with average time 164.0 and finished 81 peop
+2018-01-08 13:05:19.022806: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2018-01-08 13:05:19.482819: E tensorflow/core/common_runtime/direct_session.cc:170] Internal: failed initializing StreamExecutor for CUDA device ordinal 0: Internal: failed call to cuDevicePrimaryCtxRetain: CUDA_ERROR_OUT_OF_MEMORY; total memory reported: 8506769408
+Traceback (most recent call last):
+  File "train_elevator.py", line 67, in <module>
+    RL = DuelingDQN(9,len(env._step(0,0)[0]),memory_size=10000,dueling = False,e_greedy_increment=0.00005)
+  File "/home/avenger2236/elevator/RL_brain.py", line 48, in __init__
+    self.sess = tf.Session(config=config)
+  File "/home/avenger2236/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 1482, in __init__
+    super(Session, self).__init__(target, graph, config=config)
+  File "/home/avenger2236/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 622, in __init__
+    self._session = tf_session.TF_NewDeprecatedSession(opts, status)
+  File "/home/avenger2236/.local/lib/python2.7/site-packages/tensorflow/python/framework/errors_impl.py", line 473, in __exit__
+    c_api.TF_GetCode(self.status.status))
+tensorflow.python.framework.errors_impl.InternalError: Failed to create session.

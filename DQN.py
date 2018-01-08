@@ -4,14 +4,13 @@ import numpy as np
 # import own classes
 from deepq import DeepQ
 import elev_sys as system
-import theano
 env = system.elev_sys()
-epochs = 1000
-steps = 1000
-updateTargetNetwork = 10000
+epochs = 10000
+steps = 10000
+updateTargetNetwork = 5000
 explorationRate = 1
 minibatch_size = 128
-learnStart = 128
+learnStart = 500
 learningRate = 0.00025
 discountFactor = 0.99
 memorySize = 1000000
@@ -23,7 +22,7 @@ last100Filled = False
 renderPerXEpochs = 50
 shouldRender = False
 
-deepQ = DeepQ(52,9, memorySize, discountFactor, learningRate, learnStart)
+deepQ = DeepQ(len(env._step(0,0)[0]),9, memorySize, discountFactor, learningRate, learnStart)
 deepQ.initNetworks([])
 
 stepCounter = 0

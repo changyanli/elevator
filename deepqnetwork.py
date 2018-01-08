@@ -6,7 +6,7 @@ config.gpu_options.allow_growth = True
 np.random.seed(1)
 tf.set_random_seed(1)
 class DeepQNetwork:
-    def __init__(self,n_actions,n_features,learning_rate=0.01,
+    def __init__(self,n_actions,n_features,learning_rate=0.001,
                  reward_decay=0.9,e_greedy=0.9,replace_target_iter=300,
                  memory_size=3000,batch_size=32,e_greedy_increment=None,
                  output_graph=False):
@@ -57,12 +57,12 @@ class DeepQNetwork:
 
         # ------------------ build evaluate_net ------------------
         with tf.variable_scope('eval_net'):
-            e1 = tf.layers.dense(self.s, 50, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='e1')
+            e1 = tf.layers.dense(self.s, 256, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='e1')
             self.q_eval = tf.layers.dense(e1, self.n_actions, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='q')
 
         # ------------------ build target_net ------------------
         with tf.variable_scope('target_net'):
-            t1 = tf.layers.dense(self.s_, 50, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t1')
+            t1 = tf.layers.dense(self.s_, 256, tf.nn.relu, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t1')
             self.q_next = tf.layers.dense(t1, self.n_actions, kernel_initializer=w_initializer,bias_initializer=b_initializer, name='t2')
         with tf.variable_scope('q_target'):
             q_target = self.r + self.gamma * tf.reduce_max(self.q_next, axis=1, name='Qmax_s_')    # shape=(None, )
@@ -108,8 +108,8 @@ class DeepQNetwork:
         qValueProbabilities = []
         i = 0
         for value in qValues[0]:
-            if i == bias and epoch < 1000:
-                biasProbablity = 1000 - epoch
+            if i == bias :
+                biasProbablity = 10
             else:
                 biasProbablity = 1
             qValueProbabilities.append(qValueSum + (value + shift)*biasProbablity)
@@ -157,6 +157,10 @@ class DeepQNetwork:
         plt.ylabel('Cost')
         plt.xlabel('training steps')
         plt.show()
-
+    def save(self , num = 0):
+        saver = tf.train.Saver()
+        save_path = saver.save(self.sess, "./model"+str(num))
+        print("Model has saved at %s" % save_path)
+        
 if __name__ == '__main__':
     DQN = DeepQNetwork(3,4, output_graph=True)

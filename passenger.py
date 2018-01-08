@@ -26,14 +26,14 @@ class passenger:
         else:
             self.dir=1#up
 class passenger_generator:
-    def __init__(self,filename=None,stoptime=10000,appear_freq=60,appear_max_num=12,maxFloor=10,oddeven = False):
+    def __init__(self,filename=None,stoptime=10000,appear_freq=60,appear_max_num=12,maxFloor=10,oddeven = False,num = 0):
         self.stoptime=stoptime
         self.appear_freq=appear_freq
         self.appear_max_num=appear_max_num
         self.filename=filename
         self.maxFloor=maxFloor
         if(self.filename == None):
-            self.filename = "newPassengerList.txt"
+            self.filename = "newPassengerList"+str(num)+".txt"
             self.file=open(self.filename,'w')
             self.generator(oddeven=oddeven)
         self.file=open(self.filename)

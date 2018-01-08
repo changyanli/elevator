@@ -87,7 +87,7 @@ class DuelingDQN:
         self.q_target = tf.placeholder(tf.float32, [None, self.n_actions], name='Q_target')  # for calculating loss
         with tf.variable_scope('eval_net'):
             c_names, n_l1, w_initializer, b_initializer = \
-                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 200, \
+                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 64, \
                 tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1)  # config of layers
 
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
@@ -133,8 +133,8 @@ class DuelingDQN:
         qValueProbabilities = []
         i = 0
         for value in qValues[0]:
-            if i == bias and epoch < 1500 :
-                biasProbablity = 1500-epoch
+            if i == bias and np.random.uniform() >= self.epsilon/2. :
+                biasProbablity = 1000
             else:
                 biasProbablity = 1
             qValueProbabilities.append(qValueSum + (value + shift)*biasProbablity)
@@ -175,7 +175,10 @@ class DuelingDQN:
         self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
         self.learn_step_counter += 1
 
-
-
-
-
+    def save(self , num = 0):
+        saver = tf.train.Saver()
+        save_path = saver.save(self.sess, "./model"+str(num))
+        print("Model has saved at %s" % save_path)
+    def load(self , num = 0):
+	saver = tf.train.Saver()
+        saver.restore(self.sess,"./model"+str(num))

@@ -7,6 +7,9 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
 
+import tensorflow as tf
+import keras.backend.tensorflow_backend as ktf
+ktf.set_session(tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))))
 # import other stuff
 import random
 import numpy as np

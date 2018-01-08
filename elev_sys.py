@@ -5,15 +5,15 @@ from threading import Thread
 import numpy as np
 import time
 class elev_sys:
-    def __init__(self,filename = None,oddeven = False):
-        self.maxfloor=10 #B1~9F
+    def __init__(self,filename = None,oddeven = False,maxFloor = 10, num =0, freq = 60,appnum = 12):
+        self.maxfloor=maxFloor #B1~9F
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
         self.upbtn=[False]*(self.maxfloor-1)
         self.downbtn=[False]*(self.maxfloor-1)
         self.waitpeo=[[] for i in range(self.maxfloor)]
         self.finishtime=[]
-        self.passenger_list = passenger_generator(filename,oddeven=oddeven)
+        self.passenger_list = passenger_generator(filename=filename,oddeven=oddeven,maxFloor=self.maxfloor,num=num,appear_freq=freq,appear_max_num=appnum)
     def reset(self):
         self.elev1=elev.elevator(self.maxfloor)
         self.elev2=elev.elevator(self.maxfloor)
@@ -64,59 +64,64 @@ class elev_sys:
         self.elev1.status=action //3 -1
         self.elev2.status=action % 3 -1
         averageTime , maxTime = self._time_reward(time)
-        state=[self.elev1.floor,self.elev2.floor]
+        state=[self.elev1.floor,self.elev1.status,self.elev2.floor,self.elev2.status]
         
-        state.extend(self.getInf(time))
-        state.extend(self.elev1.getInf(time))
-        state.extend(self.elev2.getInf(time))
+        #state.extend(self.getInf(time))
+        #state.extend(self.elev1.getInf(time))
+        #state.extend(self.elev2.getInf(time))
         
-        state.extend(self.up_and_down_degree())
+        state.extend(self.up_and_down_degree(time))
         
         if averageTime < 60 :
             if len(self.finishtime)>100:
-                reward = 1
+                reward = 1-averageTime/240.
             else :
-                reward = len(self.finishtime)/200
+                reward = -0.25+len(self.finishtime)/100.
         elif averageTime < 120 :
             if len(self.finishtime)>100:
-                reward = (600-maxTime)/600
+                reward = 1-averageTime/240.
             else :
-                reward = len(self.finishtime)/400
+                reward = -0.5+len(self.finishtime)/100.
+        elif averageTime < 240 :
+            if len(self.finishtime)>100:
+                reward = 1-averageTime/240.
+            else :
+                reward = -1+len(self.finishtime)/100.
         else :
             if len(self.finishtime)>100:
-                reward = -1+ (600-averageTime)/500
+                reward = -averageTime/240.
             else :
-                reward = -1+ len(self.finishtime)/400
+                reward = -1.5+len(self.finishtime)/100.
         
         #reward = 5000 * len(self.finishtime) - averageTime * averageTime - maxTime*100
         done = False
         if(maxTime>600):
             done=True
         return np.array(state) ,reward , done , {}
-    def up_and_down_degree(self):
+    def up_and_down_degree(self,time):
         # 0 1 2 3  [elev1 elev2] [up down]
         # 4~maxfloor+3 floor[i] up
         # maxfloor+4~2maxfloor+3 floor[i-1] down
-        maxTime=600
+        maxTime=600.
         degree = []
         up_degree = 0
         down_degree =0
         for peo in self.elev1.passenger:
             if peo.dir > 0 : #up in elev1
-                up_degree += peo.time/maxTime
+                up_degree += (peo.time-time)/maxTime
             elif peo.dir <0 : #down in elev1
-                down_degree += peo.time/maxTime
-        degree.append(up_degree)
-        degree.append(down_degree)
+                down_degree += (peo.time-time)/maxTime
+        degree.append(round(up_degree,4))
+        degree.append(round(down_degree,4))
         up_degree = 0
         down_degree =0
         for peo in self.elev2.passenger:
             if peo.dir > 0 : #up in elev2
-                up_degree+=peo.time/maxTime
+                up_degree+=(peo.time-time)/maxTime
             elif peo.dir <0 : #down in elev2
-                down_degree+=peo.time/maxTime
-        degree.append(up_degree)
-        degree.append(down_degree)
+                down_degree+=(peo.time-time)/maxTime
+        degree.append(round(up_degree,4))
+        degree.append(round(down_degree,4))
         up_degrees = []
         down_degrees = []
         for floor_peo in self.waitpeo:
@@ -124,11 +129,11 @@ class elev_sys:
             down_degree=0
             for peo in floor_peo:
                 if peo.dir > 0 : #up
-                    up_degree += peo.time/maxTime
+                    up_degree += (peo.time-time)/maxTime
                 elif peo.dir <0:
-                    down_degree += peo.time/maxTime
-            up_degrees.append(up_degree)
-            down_degrees.append(down_degree)
+                    down_degree += (peo.time-time)/maxTime
+            up_degrees.append(round(up_degree,4))
+            down_degrees.append(round(down_degree,4))
         degree.extend(up_degrees)
         degree.extend(down_degrees)
         return degree
